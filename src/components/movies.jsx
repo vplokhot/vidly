@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
+import Like from "./like";
 
 class Movies extends Component {
   state = {
@@ -13,6 +14,14 @@ class Movies extends Component {
     this.setState({
       movies: updatedMovies
     });
+  };
+
+  handleLike = movie => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index] = { ...movies[index] };
+    movies[index].liked = !movies[index].liked;
+    this.setState({ movies });
   };
 
   resetMovies = () => {
@@ -50,6 +59,7 @@ class Movies extends Component {
                     table margins are uneven without it
                 */}
                 <th scope="col" />
+                <th scope="col" />
               </tr>
             </thead>
             <tbody>
@@ -59,6 +69,12 @@ class Movies extends Component {
                   <td>{movie.genre.name}</td>
                   <td>{movie.numberInStock}</td>
                   <td>{movie.dailyRentalRate}</td>
+                  <td>
+                    <Like
+                      liked={movie.liked}
+                      onClick={() => this.handleLike(movie)}
+                    />
+                  </td>
                   <td>
                     <button
                       onClick={() => {
