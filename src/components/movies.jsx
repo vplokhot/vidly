@@ -1,10 +1,14 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import Like from "./like";
+import Pagination from "./pagination";
+import { paginate } from "../utils/paginate";
 
 class Movies extends Component {
   state = {
-    movies: getMovies()
+    movies: getMovies(),
+    pageSize: 4,
+    currentPage: 1
   };
 
   handleMovieDelete = movieId => {
@@ -14,6 +18,10 @@ class Movies extends Component {
     this.setState({
       movies: updatedMovies
     });
+  };
+
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
   };
 
   handleLike = movie => {
@@ -28,8 +36,10 @@ class Movies extends Component {
     this.setState({ movies: getMovies() });
   };
 
-  renderMovies = () => {
-    if (this.state.movies.length === 0)
+  render() {
+    const { length } = this.state.movies;
+    const { currentPage, pageSize, movies: allMovies } = this.state;
+    if (length === 0)
       return (
         <div>
           "No movies available."
@@ -43,6 +53,7 @@ class Movies extends Component {
           </button>
         </div>
       );
+    const movies = paginate(allMovies, currentPage, pageSize);
 
     return (
       <div className="container">
@@ -63,7 +74,7 @@ class Movies extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.movies.map(movie => (
+              {movies.map(movie => (
                 <tr key={movie._id}>
                   <td>{movie.title}</td>
                   <td>{movie.genre.name}</td>
@@ -89,19 +100,25 @@ class Movies extends Component {
               ))}
             </tbody>
           </table>
+          <Pagination
+            itemsCount={length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={this.handlePageChange}
+          />
         </div>
       </div>
     );
-  };
-
-  render() {
-    return (
-      <div className="container">
-        <h1>Movies</h1>
-        {this.renderMovies()}
-      </div>
-    );
   }
+
+  // render() {
+  //   return (
+  //     <div className="container">
+  //       <h1>Movies</h1>
+  //       {this.renderMovies()}
+  //     </div>
+  //   );
+  // }
 }
 
 export default Movies;
