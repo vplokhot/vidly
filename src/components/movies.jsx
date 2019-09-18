@@ -6,7 +6,6 @@ import Pagination from "./pagination";
 import ListGroup from "./listGroup";
 import { paginate } from "../utils/paginate";
 import MoviesTable from "./moviesTable";
-
 class Movies extends Component {
   state = {
     movies: [],
